@@ -18,7 +18,6 @@ class DocumentsViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
 
-        
         //fills the title, name field, and content view accordingly if the document already existed
         if let document = document {
             let name = document.name
@@ -39,18 +38,20 @@ class DocumentsViewController: UIViewController {
     
     //save a document
     @IBAction func saveDocument(_ sender: Any) {
-
-        let name = nameField.text
+        
+        guard let name = nameField.text else {
+            return
+        }
         
         let content = documentTextView.text
         
         if document == nil {
             document = Document(name: name, content: content)
         } else {
-            document?.update(name: name ?? "", content: content)
+            document?.update(name: name, content: content)
         }
         
-        if let document = Document(name: name, content: content) {
+        if let document = document {
             do {
                 let managedContext = document.managedObjectContext
                 
@@ -63,7 +64,6 @@ class DocumentsViewController: UIViewController {
         }
         
         self.navigationController?.popViewController(animated: true)
-        
  
     }
 

@@ -23,6 +23,8 @@ class DocumentsTableViewController: UIViewController, UITableViewDataSource, UIT
         dateFormatter.dateStyle = .medium
         dateFormatter.timeStyle = .medium
         
+        documentsTableView.delegate = self
+        documentsTableView.dataSource = self
     }
     
     //viewWillAppear function, guided by Expenses application tutorial on youtube
@@ -80,7 +82,20 @@ class DocumentsTableViewController: UIViewController, UITableViewDataSource, UIT
     
     //function to delete a document
     func delete(at indexPath: IndexPath) {
+        let document = documents[indexPath.row]
         
+        if let managedObjectContext = document.managedObjectContext {
+            managedObjectContext.delete(document)
+            
+            do {
+                try managedObjectContext.save()
+                self.documents.remove(at: indexPath.row)
+                documentsTableView.deleteRows(at: [indexPath], with: .automatic)
+            } catch {
+                print("Could not delete document")
+                documentsTableView.reloadData()
+            }
+        }
     }
     
     override func didReceiveMemoryWarning() {
@@ -110,8 +125,6 @@ class DocumentsTableViewController: UIViewController, UITableViewDataSource, UIT
 
 }
 
-
-//Figure out delete function
 
 
 
